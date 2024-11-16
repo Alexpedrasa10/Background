@@ -34,6 +34,10 @@ class Maths implements ShouldQueue
 
         $result = array_shift($params);
 
+        if (!is_int($result)) {
+            throw new \InvalidArgumentException("Invalid parameter type: " . gettype($result));
+        }
+
         foreach ($params as $p) {
             if (!is_int($p)) {
                 throw new \InvalidArgumentException("Invalid parameter type: " . gettype($p));
