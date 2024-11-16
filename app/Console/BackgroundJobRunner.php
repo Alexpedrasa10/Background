@@ -17,22 +17,26 @@ class BackgroundJobRunner
     {
         try {
 
-            $class = "App\Jobs\{$className}";
+            $class = "App\\Jobs\\$className";
 
             if (!class_exists($class)) {
-                throw new \Exception("La clase $className no existe.");
-            }
-            if (!method_exists($class, $method)) {
-                throw new \Exception("El método $method no existe en $className.");
+                throw new \Exception("The class $className not exists.");
             }
 
-            $instance = new $className();
-            $result = call_user_func_array([$instance, $method], $params);
+            if (!method_exists($class, $method)) {
+                throw new \Exception("The method $method not exists in $className.");
+            }
+
+            dump(config('background_jobs.allowed_classes'));
+            if (!in_array($class, config('background_jobs.allowed_classes'))) {
+                throw new \Exception("The class $className is unathorized.");
+            }
+
+            $instance = new $class();
 
             self::log("Job ejecutado con éxito: $className::$method", 'success');
+            return $instance->$method($params);
 
-            return $result;
-        
         } catch (\Exception $e) {
 
             self::log("Error ejecutando $className::$method: " . $e->getMessage(), 'error');

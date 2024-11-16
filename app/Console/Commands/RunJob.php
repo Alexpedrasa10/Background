@@ -28,7 +28,17 @@ class RunJob extends Command
     {
         $class = $this->argument('class');
         $method = $this->argument('method');
-        $params = json_decode($this->argument('params') ?? '[]', true);
+        $params = $this->argument('params');
+
+        if ($params) {
+            
+            $params = json_decode($params, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $this->error('Invalid JSON format for parameters.');
+                return 1;
+            }
+        }
 
         try {
 
