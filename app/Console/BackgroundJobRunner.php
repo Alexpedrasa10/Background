@@ -2,6 +2,8 @@
 
 namespace App\Console;
 
+use App\Helpers\Background;
+
 class BackgroundJobRunner
 {
 
@@ -25,34 +27,20 @@ class BackgroundJobRunner
                 throw new \Exception("The method $method not exists in $class.");
             }
 
-            dump(config('background_jobs.allowed_classes'));
             if (!in_array($class, config('background_jobs.allowed_classes'))) {
                 throw new \Exception("The class $class is unathorized.");
             }
 
             $instance = new $class();
 
-            self::log("Job ejecutado con éxito: $class::$method", 'success');
+            Background::log("Job execute was succesfull.: $class::$method", 'success');
             return $instance->$method($params);
 
         } catch (\Exception $e) {
 
-            self::log("Error ejecutando $class::$method: " . $e->getMessage(), 'error');
+            Background::log("Error ejecutando $class::$method: " . $e->getMessage(), 'error');
             throw $e;
         }
-    }
-
-    /**
-     * Create log for background jobs
-     * 
-     * @param string $message
-     * @param string $type
-     * @return void
-     */
-    private static function log(string $message, string $type = 'info') :void
-    {
-        $logFile = storage_path("logs/background_jobs_$type.log");
-        file_put_contents($logFile, '[' . now() . "] $message" . PHP_EOL, FILE_APPEND);
     }
 }
 

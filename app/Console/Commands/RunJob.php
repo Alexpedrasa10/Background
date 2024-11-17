@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Console\BackgroundJobRunner;
+use App\Helpers\Background;
 
 class RunJob extends Command
 {
@@ -12,7 +13,7 @@ class RunJob extends Command
      *
      * @var string
      */
-    protected $signature = 'run:job {class} {method} {params?}';
+    protected $signature = 'run:job {class} {method} {params?} {retries?} {delay?}';
 
     /**
      * The console command description.
@@ -26,27 +27,45 @@ class RunJob extends Command
      */
     public function handle()
     {
-        $class = $this->argument('class');
-        $method = $this->argument('method');
-        $params = $this->argument('params');
+        $attempt = 0;
+        $retryAttempts = $this->argument('retries') ?? 3;
+        $delay = $this->argument('delay') ?? 0;
 
-        if ($params) {
+        do {
             
-            $params = json_decode($params, true);
-
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                $this->error('Invalid JSON format for parameters.');
-                return 1;
+            if ($attempt != 0) {
+                sleep($delay); 
             }
-        }
 
-        try {
+            $class = $this->argument('class');
+            $method = $this->argument('method');
+            $params = $this->argument('params');
 
-            BackgroundJobRunner::run($class, $method, $params);
-            $this->info("Job $class::$method ejecutado con éxito.");
-            
-        } catch (\Exception $e) {
-            $this->error("Error: " . $e->getMessage());
-        }
+            if ($params) {
+                
+                $params = json_decode($params, true);
+
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    $this->error('Invalid JSON format for parameters.');
+                    return 1;
+                }
+            }
+
+            try {
+
+                BackgroundJobRunner::run($class, $method, $params);
+                $this->info("Job $class::$method execute was succesfull..");
+                return 1;
+                
+            } catch (\Exception $e) {
+                $attempt++;
+                $this->error("Error: " . $e->getMessage());
+            }
+
+
+
+        } while ($attempt < $retryAttempts);
+    
+        Background::log("Job fails after $attempt - $class::$method", 'error');       
     }
 }

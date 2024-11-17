@@ -25,7 +25,7 @@ class BackgroundRunTest extends TestCase
 
         // Verify logs content
         $logContent = File::get($logFile);
-        $this->assertStringContainsString('Job ejecutado con éxito: App\Jobs\Maths::sum', $logContent, 'El resultado esperado no está en el log.');
+        $this->assertStringContainsString('Job execute was succesfull.: App\Jobs\Maths::sum', $logContent, 'El resultado esperado no está en el log.');
 
         File::delete($logFile);
     }
@@ -40,15 +40,17 @@ class BackgroundRunTest extends TestCase
         }
 
         // Run the background job with invalid data to trigger an error
-        Background::runBackgroundJob('App\Jobs\Maths', 'sum', [1, 6, 9, "Fails"]);
-        sleep(2); // Give time for the background job to complete
+        Background::runBackgroundJob('App\Jobs\Maths', 'sum', [1, 6, 9, "Fails"], 4, 1);
+        sleep(4);
 
         // Verify if logs exist
         $this->assertTrue(File::exists($logFile), 'El archivo de log de errores no fue creado.');
 
         // Verify logs content
         $logContent = File::get($logFile);
+
         $this->assertStringContainsString('Error ejecutando App\Jobs\Maths::sum: Invalid parameter type: string', $logContent, 'El error esperado no está en el log.');
+        $this->assertStringContainsString('Job fails after 4 - App\Jobs\Maths::sum', $logContent, 'Dont have retry attemps.');
 
         // Clean up
         File::delete($logFile);
@@ -70,7 +72,7 @@ class BackgroundRunTest extends TestCase
 
         // Verify logs content
         $logContent = File::get($logFile);
-        $this->assertStringContainsString('Job ejecutado con éxito: App\Jobs\Maths::multiply', $logContent, 'Result is not in the log file.');
+        $this->assertStringContainsString('Job execute was succesfull.: App\Jobs\Maths::multiply', $logContent, 'Result is not in the log file.');
 
         File::delete($logFile);
     }
@@ -83,15 +85,17 @@ class BackgroundRunTest extends TestCase
             File::delete($logFile);
         }
 
-        Background::runBackgroundJob('App\Jobs\Maths', 'multiply', ['Fails']);
-        sleep(2);
+        Background::runBackgroundJob('App\Jobs\Maths', 'multiply', ['Fails'], 4, 1);
+        sleep(4);
 
         // Verify if logs exists
         $this->assertTrue(File::exists($logFile), 'The log file not exists.');
 
         // Verify logs content
         $logContent = File::get($logFile);
+        
         $this->assertStringContainsString('Error ejecutando App\Jobs\Maths::multiply', $logContent, 'Result is not in the log file.');
+        $this->assertStringContainsString('Job fails after 4 - App\Jobs\Maths::multiply', $logContent, 'Dont have retry attemps.');
 
         File::delete($logFile);
     }
@@ -104,17 +108,18 @@ class BackgroundRunTest extends TestCase
             File::delete($logFile);
         }
 
-        Background::runBackgroundJob('App\Jobs\Maths', 'subtract', [5,6]);
-        sleep(2);
+        Background::runBackgroundJob('App\Jobs\Maths', 'subtract', [5,6], 4, 1);
+        sleep(4);
 
         // Verify if logs exists
         $this->assertTrue(File::exists($logFile), 'The log file not exists.');
 
         // Verify logs content
         $logContent = File::get($logFile);
-        $this->assertStringContainsString('Job ejecutado con éxito: App\Jobs\Maths::subtract', $logContent, 'Result is not in the log file.');
 
-        //File::delete($logFile);
+        $this->assertStringContainsString('Job execute was succesfull.: App\Jobs\Maths::subtract', $logContent, 'Result is not in the log file.');        
+
+        File::delete($logFile);
     }
 
     public function test_run_background_job_subtract_error(): void
@@ -125,17 +130,20 @@ class BackgroundRunTest extends TestCase
             File::delete($logFile);
         }
 
-        Background::runBackgroundJob('App\Jobs\Maths', 'subtract', ['Fails']);
-        sleep(2);
+        Background::runBackgroundJob('App\Jobs\Maths', 'subtract', ['Fails'], 4, 1);
+        sleep(4);
 
         // Verify if logs exists
         $this->assertTrue(File::exists($logFile), 'The log file not exists.');
 
         // Verify logs content
         $logContent = File::get($logFile);
+
         $this->assertStringContainsString('Error ejecutando App\Jobs\Maths::subtract:', $logContent, 'Result is not in the log file.');
 
-        //File::delete($logFile);
+        $this->assertStringContainsString('Job fails after 4 - App\Jobs\Maths::subtract', $logContent, 'Dont have retry attemps.');
+
+        File::delete($logFile);
     }
 }
 
