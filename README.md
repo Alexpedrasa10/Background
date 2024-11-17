@@ -1,66 +1,148 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Background Job Runner for Laravel
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This project implements a custom system for running background tasks in Laravel applications. It allows you to execute PHP classes and methods independently of Laravel's native queue system, with advanced features like retries, error handling, priorities, and execution delays.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Features
+- Execute PHP classes and methods in the background.
+- Configure retries and execution delays.
+- Job prioritization.
+- Detailed logs for success and error cases.
+- Global helper for easy use within Laravel code.
+- Artisan command to run jobs from the command line.
+- Included unit tests to validate functionality.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Installation
 
-## Learning Laravel
+### Requirements
+- PHP 8.x
+- Laravel 8.x or higher
+- Composer
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Steps
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Alexpedrasa10/Background.git
+   cd Background
+    ```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+2. Install dependencies:
+    ```bash
+    composer install
+    ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+3. Set up the environment: Copy the .env.example file to `.env`:
+    ```bash
+    cp .env.example .env
+    php artisan key:generate
+    ```
 
-## Laravel Sponsors
+4. configure your database credentials:
+    ```env
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=nombre_de_base_datos
+    DB_USERNAME=usuario
+    DB_PASSWORD=contraseña
+    ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+5. Run migrations:
+    ```bash
+    php artisan migrate
+    ```
 
-### Premium Partners
+6. Ensure log permissions: Make sure storage/logs is writable::
+    ```bash
+    chmod -R 775 storage/logs
+    ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+7. Optionally: Run unit tests:
+    ```bash
+    php artisan test
+   ```
 
-## Contributing
+## Usage
+Global Helper: `Background::runBackgroundJob`
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+The global helper allows you to run background jobs directly from your Laravel code.
+Syntax
 
-## Code of Conduct
+    ```php
+        Background::runBackgroundJob($class, $method, $parameters, $delay = 1, $retries = 3);
+    ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- `$class`: Job class (e.g., App\Jobs\Maths).
+- `$method`: Method to execute within the class.
+- `$parameters`: Array of parameters to pass to the method.
+- `$delay`: (Optional) Delay in seconds before executing the job.
+- `$retries`: (Optional) Number of retry attempts if the job fails.
 
-## Security Vulnerabilities
+### Example:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    ```php
+        Background::runBackgroundJob('App\Jobs\Maths', 'sum', [1, 6, 9, 10], 5, 3);
+    ```
 
-## License
+This command runs the sum method of the App\Jobs\Maths class, a 5-second delay, and retries the job 3 times in case of failure.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## Artisan Command: `run:job`
+
+The Artisan command allows you to run jobs from the command line.
+
+### Syntax
+    ```bash
+        php artisan run:job 'Class' method '[parameters]' retries delay
+    ```
+- `$class`: Job class (e.g., App\Jobs\Maths).
+- `$method`: Method to execute within the class.
+- `$parameters`: Array of parameters to pass to the method.
+- `$delay`: (Optional) Delay in seconds before executing the job.
+- `$retries`: (Optional) Number of retry attempts if the job fails.
+
+### Example
+    ```bash
+        php artisan run:job 'App\Jobs\Maths' sum '[1, 6, 9]' 4 1
+    ```
+This runs the sum method of the App\Jobs\Maths class with 4 retries and a 1-second delay.
+
+---
+
+## Security
+
+Classes and methods are validated to prevent malicious code execution.
+Ensure that only approved classes are registered in the config/background_jobs.php file:
+
+    ```php
+        return [
+            'allowed_classes' => [
+                App\Jobs\Maths::class,
+                App\Jobs\EmailNotification::class,
+            ],
+        ];
+    ```
+
+---
+
+## Unit Testing
+
+Unit tests are included to validate the system's behavior.
+### Run Tests
+
+    ```bash
+        php artisan test
+    ```
+### Coverage
+
+- Job execution with parameters.
+- Error handling.
+- Retries and delays.
+
+
+
+Powered by Alex Pedrasa 
