@@ -72,7 +72,7 @@ The global helper allows you to run background jobs directly from your Laravel c
 Syntax
 
     ```php
-        Background::runBackgroundJob($class, $method, $parameters, $delay = 1, $retries = 3);
+    Background::runBackgroundJob($class, $method, $parameters, $delay = 1, $retries = 3);
     ```
 
 - `$class`: Job class (e.g., App\Jobs\Maths).
@@ -84,7 +84,7 @@ Syntax
 ### Example:
 
     ```php
-        Background::runBackgroundJob('App\Jobs\Maths', 'sum', [1, 6, 9, 10], 5, 3);
+    Background::runBackgroundJob('App\Jobs\Maths', 'sum', [1, 6, 9, 10], 5, 3);
     ```
 
 This command runs the sum method of the App\Jobs\Maths class, a 5-second delay, and retries the job 3 times in case of failure.
@@ -119,12 +119,12 @@ Classes and methods are validated to prevent malicious code execution.
 Ensure that only approved classes are registered in the config/background_jobs.php file:
 
     ```php
-        return [
-            'allowed_classes' => [
-                App\Jobs\Maths::class,
-                App\Jobs\EmailNotification::class,
-            ],
-        ];
+    return [
+        'allowed_classes' => [
+            App\Jobs\Maths::class,
+            App\Jobs\EmailNotification::class,
+        ],
+    ];
     ```
 
 ---
