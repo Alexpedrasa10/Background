@@ -105,9 +105,11 @@ php artisan run:job 'Class' method '[parameters]' retries delay
 - `$retries`: (Optional) Number of retry attempts if the job fails.
 
 ### Example
-    ```bash
-    php artisan run:job 'App\Jobs\Maths' sum '[1, 6, 9]' 4 1
-    ```
+
+```bash
+php artisan run:job 'App\Jobs\Maths' sum '[1, 6, 9]' 4 1
+```
+
 This runs the sum method of the App\Jobs\Maths class with 4 retries and a 1-second delay.
 
 
