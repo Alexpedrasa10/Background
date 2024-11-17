@@ -67,11 +67,12 @@ This project implements a custom system for running background tasks in Laravel 
 Global Helper: `Background::runBackgroundJob`
 
 The global helper allows you to run background jobs directly from your Laravel code.
-Syntax
 
-    ```php
-    Background::runBackgroundJob($class, $method, $parameters, $delay = 1, $retries = 3);
-    ```
+### Syntax
+
+```php
+Background::runBackgroundJob($class, $method, $parameters, $delay = 1, $retries = 3);
+```
 
 - `$class`: Job class (e.g., App\Jobs\Maths).
 - `$method`: Method to execute within the class.
@@ -81,9 +82,9 @@ Syntax
 
 ### Example:
 
-    ```php
-    Background::runBackgroundJob('App\Jobs\Maths', 'sum', [1, 6, 9, 10], 5, 3);
-    ```
+```php
+Background::runBackgroundJob('App\Jobs\Maths', 'sum', [1, 6, 9, 10], 5, 3);
+```
 
 This command runs the sum method of the App\Jobs\Maths class, a 5-second delay, and retries the job 3 times in case of failure.
 
@@ -93,9 +94,11 @@ This command runs the sum method of the App\Jobs\Maths class, a 5-second delay, 
 The Artisan command allows you to run jobs from the command line.
 
 ### Syntax
-    ```bash
-    php artisan run:job 'Class' method '[parameters]' retries delay
-    ```
+
+```bash
+php artisan run:job 'Class' method '[parameters]' retries delay
+```
+
 - `$class`: Job class (e.g., App\Jobs\Maths).
 - `$method`: Method to execute within the class.
 - `$parameters`: Array of parameters to pass to the method.
@@ -114,14 +117,14 @@ This runs the sum method of the App\Jobs\Maths class with 4 retries and a 1-seco
 Classes and methods are validated to prevent malicious code execution.
 Ensure that only approved classes are registered in the config/background_jobs.php file:
 
-    ```php
-    return [
-        'allowed_classes' => [
-            App\Jobs\Maths::class,
-            App\Jobs\EmailNotification::class,
-        ],
-    ];
-    ```
+```php
+return [
+    'allowed_classes' => [
+        App\Jobs\Maths::class,
+        App\Jobs\EmailNotification::class,
+    ],
+];
+```
 
 
 ## Unit Testing
@@ -129,15 +132,15 @@ Ensure that only approved classes are registered in the config/background_jobs.p
 Unit tests are included to validate the system's behavior.
 ### Run Tests
 
-    ```bash
-        php artisan test
-    ```
+```bash
+php artisan test
+```
+
 ### Coverage
 
 - Job execution with parameters.
 - Error handling.
 - Retries and delays.
-
 
 
 Powered by Alex Pedrasa 
