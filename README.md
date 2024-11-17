@@ -1,4 +1,4 @@
-# Background Job Runner for Laravel
+# Background Runner
 
 This project implements a custom system for running background tasks in Laravel applications. It allows you to execute PHP classes and methods with advanced features like retries, error handling, and execution delays.
 
