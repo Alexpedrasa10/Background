@@ -1,12 +1,11 @@
 # Background Job Runner for Laravel
 
-This project implements a custom system for running background tasks in Laravel applications. It allows you to execute PHP classes and methods independently of Laravel's native queue system, with advanced features like retries, error handling, priorities, and execution delays.
+This project implements a custom system for running background tasks in Laravel applications. It allows you to execute PHP classes and methods with advanced features like retries, error handling, and execution delays.
 
 
 ## Features
 - Execute PHP classes and methods in the background.
 - Configure retries and execution delays.
-- Job prioritization.
 - Detailed logs for success and error cases.
 - Global helper for easy use within Laravel code.
 - Artisan command to run jobs from the command line.
