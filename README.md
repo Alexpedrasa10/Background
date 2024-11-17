@@ -2,7 +2,6 @@
 
 This project implements a custom system for running background tasks in Laravel applications. It allows you to execute PHP classes and methods independently of Laravel's native queue system, with advanced features like retries, error handling, priorities, and execution delays.
 
----
 
 ## Features
 - Execute PHP classes and methods in the background.
@@ -13,7 +12,6 @@ This project implements a custom system for running background tasks in Laravel 
 - Artisan command to run jobs from the command line.
 - Included unit tests to validate functionality.
 
----
 
 ## Installation
 
@@ -55,7 +53,7 @@ This project implements a custom system for running background tasks in Laravel 
     php artisan migrate
     ```
 
-6. Ensure log permissions: Make sure storage/logs is writable::
+6. Ensure log permissions: Make sure storage/logs is writable:
     ```bash
     chmod -R 775 storage/logs
     ```
@@ -89,7 +87,6 @@ Syntax
 
 This command runs the sum method of the App\Jobs\Maths class, a 5-second delay, and retries the job 3 times in case of failure.
 
----
 
 ## Artisan Command: `run:job`
 
@@ -97,7 +94,7 @@ The Artisan command allows you to run jobs from the command line.
 
 ### Syntax
     ```bash
-        php artisan run:job 'Class' method '[parameters]' retries delay
+    php artisan run:job 'Class' method '[parameters]' retries delay
     ```
 - `$class`: Job class (e.g., App\Jobs\Maths).
 - `$method`: Method to execute within the class.
@@ -107,11 +104,10 @@ The Artisan command allows you to run jobs from the command line.
 
 ### Example
     ```bash
-        php artisan run:job 'App\Jobs\Maths' sum '[1, 6, 9]' 4 1
+    php artisan run:job 'App\Jobs\Maths' sum '[1, 6, 9]' 4 1
     ```
 This runs the sum method of the App\Jobs\Maths class with 4 retries and a 1-second delay.
 
----
 
 ## Security
 
@@ -127,7 +123,6 @@ Ensure that only approved classes are registered in the config/background_jobs.p
     ];
     ```
 
----
 
 ## Unit Testing
 
